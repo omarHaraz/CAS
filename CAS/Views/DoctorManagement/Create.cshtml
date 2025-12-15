@@ -1,0 +1,63 @@
+﻿@model CAS.Models.Users.Doctor
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    Layout = "_AdminLayout"; // Use the specific Admin Navbar
+    ViewData["Title"] = "Register New Doctor";
+}
+
+<div class="container" style="margin-top: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 shadow p-5 rounded bg-white border">
+
+            <div class="text-center mb-5">
+                <h2>🧑‍⚕️ Register New Doctor Account</h2>
+                <p class="text-muted">Fill in the details to create a new doctor account and assign a specialty.</p>
+            </div>
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-4">
+                        <label class="control-label fw-bold">Username</label>
+                        <input asp-for="Username" class="form-control" required />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group mb-4">
+                        <label class="control-label fw-bold">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" required  />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-4">
+                        <label class="control-label fw-bold">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group mb-4">
+                        <label class="control-label fw-bold">Assign Specialty</label>
+                        <select name="specialtyId" asp-items="@ViewBag.SpecialtyList" class="form-control" required>
+                            <option value="">-- Select Specialty --</option>
+                        </select>
+                        <span class="text-muted form-text">Admin assigns the primary field.</span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg">Complete Registration</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to Doctor List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        // Ensure validation scripts are loaded
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

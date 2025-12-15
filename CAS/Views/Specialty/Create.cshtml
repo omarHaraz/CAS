@@ -1,0 +1,40 @@
+﻿@model CAS.Models.Specialty
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage Specialties";
+}
+
+<div class="container" style="margin-top: 100px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="text-center mb-4">
+                <h2>Add New Specialty</h2>
+            </div>
+
+            <div class="shadow p-5 rounded bg-white border">
+
+                <form asp-action="Create" method="post">
+
+                    <div class="form-group mb-4">
+                        <label class="control-label fw-bold">Specialty Name</label>
+                        <input asp-for="Name" class="form-control" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg">Define Specialty</button>
+                        <a href="/Specialty/Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

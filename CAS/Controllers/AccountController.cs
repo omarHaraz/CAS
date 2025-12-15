@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CAS.Data;
 using CAS.Factories;
 using CAS.Models.Users;
+using CAS.Data;
 
 namespace CAS.Controllers
 {
@@ -16,6 +16,12 @@ namespace CAS.Controllers
             _context = context;
             _userFactory = userFactory;
         }
+
+
+
+
+
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -56,6 +62,10 @@ namespace CAS.Controllers
 
             if (user != null)
             {
+                HttpContext.Session.SetInt32("UserId", user.Id);
+
+                HttpContext.Session.SetString("UserRole", user.Role);
+
                 if (user.Role == "Doctor")
                 {
                     return RedirectToAction("DoctorDashboard", "Home");
@@ -71,6 +81,12 @@ namespace CAS.Controllers
             }
             ViewBag.Error = "Invalid Username or Password";
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

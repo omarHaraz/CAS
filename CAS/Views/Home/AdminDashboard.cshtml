@@ -1,6 +1,46 @@
 ﻿@{
-	ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Admin Dashboard";
 }
-<h1>⚙️ Admin Dashboard</h1>
-<p>Welcome. You can manage the system users here.</p>
-<a href="/Account/Login" class="btn btn-danger">Logout</a>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1>Admin Control Panel</h1>
+        <p class="text-muted">Welcome, Admin. Use this panel to manage users and clinic settings.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0 h-100 p-4">
+                <div class="card-body">
+                    <h5 class="card-title text-primary"> Specialty Management</h5>
+                    <p class="card-text text-muted">Define and manage the list of medical fields available in the clinic (e.g., Cardiology, Dermatology).</p>
+                    <a href="/Specialty/Index" class="btn btn-outline-primary mt-2">Go to Specialties</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0 h-100 p-4">
+                <div class="card-body">
+                    <h5 class="card-title text-danger"> Doctor Management</h5>
+                    <p class="card-text text-muted">Register new doctor accounts, view assigned specialties, and remove doctors.</p>
+                    <a href="/DoctorManagement/Index" class="btn btn-outline-danger mt-2">Manage Doctors</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0 h-100 p-4">
+                <div class="card-body">
+                    <h5 class="card-title text-success"> User Accounts</h5>
+                    <p class="card-text text-muted">View and manage all registered accounts (Doctors, Patients, and Admins).</p>
+                    <a href="#" class="btn btn-outline-success mt-2 disabled">Manage Users</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
