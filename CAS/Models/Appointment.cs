@@ -1,40 +1,39 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CAS.Models.Users; 
+using CAS.Models.Users;
 
 namespace CAS.Models
 {
+    public enum AppointmentStatus
+    {
+        Pending,
+        Confirmed,
+        Cancelled,
+        Completed
+    }
+
     public class Appointment
     {
+        [Key]
         public int Id { get; set; }
 
-        [Required]
-        [DataType(DataType.DateTime)]
-        [Display(Name = "Appointment Time")]
-        public DateTime DateTime { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string Status { get; set; } = "Scheduled";
-
-
-        [Display(Name = "Patient")]
         public int PatientId { get; set; }
-
         [ForeignKey("PatientId")]
-        public Patient? Patient { get; set; }
+        public Patient Patient { get; set; }
 
-        [Display(Name = "Doctor")]
         public int DoctorId { get; set; }
-
         [ForeignKey("DoctorId")]
-        public Doctor? Doctor { get; set; }
+        public Doctor Doctor { get; set; }
 
-        [Display(Name = "Specialty")]
-        public int SpecialtyId { get; set; }
+        [Required]
+        public DateTime StartTime { get; set; }
 
-        [ForeignKey("SpecialtyId")]
-        public Specialty? Specialty { get; set; }
+        [Required]
+        public DateTime EndTime { get; set; }
+
+        public string Reason { get; set; } = string.Empty;
+
+        public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
     }
 }

@@ -2,7 +2,6 @@
 using CAS.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace CAS.Data
 {
     public class AppDbContext : DbContext
@@ -18,27 +17,23 @@ namespace CAS.Data
         public DbSet<Specialty> Specialties { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
 
-        // Inside CAS.Data.AppDbContext.cs
-
-        // Inside CAS.Data.AppDbContext.cs
+        public DbSet<Bill> Bills { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // FIX for cycle error (Error 1785)
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Patient)
+                .WithMany()
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Doctor)
-                .WithMany(d => d.Appointments)
+                .WithMany()
                 .HasForeignKey(a => a.DoctorId)
-                .OnDelete(DeleteBehavior.Restrict); // <-- THIS IS THE KEY FIX
-
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Patient)
-                .WithMany(p => p.Appointments)
-                .HasForeignKey(a => a.PatientId)
-                .OnDelete(DeleteBehavior.Restrict); // <-- THIS IS THE KEY FIX
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

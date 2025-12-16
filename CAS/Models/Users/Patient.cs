@@ -7,6 +7,5 @@ namespace CAS.Models.Users
         [StringLength(10)]
         public string? InsuranceNumber { get; set; }
 
-        public ICollection<Appointment>? Appointments { get; set; }
     }
 }

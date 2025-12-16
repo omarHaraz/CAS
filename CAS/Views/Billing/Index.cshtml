@@ -1,0 +1,53 @@
+﻿@model IEnumerable<CAS.Models.Bill>
+
+@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "My Bills";
+}
+
+<div class="container mt-5">
+    <h2>Outstanding Bills</h2>
+    <p class="text-muted">Please pay your pending invoices below.</p>
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="text-center p-5">
+                    <h4 class="text-success">All caught up!</h4>
+                    <p>You have no pending bills at the moment.</p>
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="p-3">Bill ID</th>
+                            <th class="p-3">Doctor</th>
+                            <th class="p-3">Date</th>
+                            <th class="p-3">Amount</th>
+                            <th class="p-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var bill in Model)
+                        {
+                            <tr>
+                                <td class="p-3">#@bill.Id</td>
+                                <td class="p-3">Dr. @bill.Appointment.Doctor.Username</td>
+                                <td class="p-3">@bill.Appointment.StartTime.ToShortDateString()</td>
+                                <td class="p-3 fw-bold text-danger">$@bill.Amount</td>
+                                <td class="p-3">
+                                    <a asp-controller="Billing" asp-action="Pay" asp-route-id="@bill.Id" class="btn btn-sm btn-primary">
+                                        Pay Now
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

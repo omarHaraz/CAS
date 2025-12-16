@@ -63,7 +63,7 @@ namespace CAS.Controllers
             if (user != null)
             {
                 HttpContext.Session.SetInt32("UserId", user.Id);
-
+                HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("UserRole", user.Role);
 
                 if (user.Role == "Doctor")

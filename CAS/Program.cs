@@ -1,6 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using CAS.Factories;
 using CAS.Data;
+using CAS.Facade;
+using CAS.Factories;
+using CAS.Strategy;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IUserFactory, UserFactory>();
+
+builder.Services.AddScoped<IAppointmentFacade, AppointmentFacade>();
+
+builder.Services.AddScoped<PaymentContext>();
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);

@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "Payment Successful";
+}
+
+<div class="container mt-5 text-center">
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 500px;">
+        <div class="card-body p-5">
+            <h2 class="text-success mb-3">Payment Successful!</h2>
+            <p class="lead">Thank you. Your transaction has been processed.</p>
+            <a asp-controller="Billing" asp-action="Index" class="btn btn-primary mt-3">Back to Bills</a>
+        </div>
+    </div>
+</div>

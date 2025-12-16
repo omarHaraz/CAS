@@ -1,0 +1,70 @@
+﻿@model IEnumerable<CAS.Models.Appointment>
+
+@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "My Appointments";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Appointments History</h2>
+        <a asp-controller="Booking" asp-action="Book" class="btn btn-primary">
+            + Book New
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="text-center p-5">
+                    <h4 class="text-muted">No appointments found.</h4>
+                    <p>You haven't booked any consultations yet.</p>
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="p-3">Doctor</th>
+                            <th class="p-3">Date</th>
+                            <th class="p-3">Time</th>
+                            <th class="p-3">Reason</th>
+                            <th class="p-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="p-3 fw-bold">Dr. @item.Doctor.Username</td>
+                                <td class="p-3">@item.StartTime.ToString("MMM dd, yyyy")</td>
+                                <td class="p-3">@item.StartTime.ToString("hh:mm tt")</td>
+                                <td class="p-3 text-muted">@item.Reason</td>
+                                <td class="p-3">
+                                    @if (item.Status == CAS.Models.AppointmentStatus.Pending)
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                    else if (item.Status == CAS.Models.AppointmentStatus.Confirmed)
+                                    {
+                                        <span class="badge bg-success">Confirmed</span>
+                                    }
+                                    else if (item.Status == CAS.Models.AppointmentStatus.Cancelled)
+                                    {
+                                        <span class="badge bg-danger">Cancelled</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Completed</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@model CAS.Models.Bill
+
+@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "Pay Bill";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Secure Payment</h4>
+                </div>
+                <div class="card-body p-4 text-center">
+
+                    <div class="alert alert-light border mb-4">
+                        <small class="text-muted">Total Amount Due</small>
+                        <h2 class="fw-bold text-success">$@Model.Amount</h2>
+                    </div>
+
+                    <form asp-action="ProcessPayment" method="post">
+                        <input type="hidden" name="billId" value="@Model.Id" />
+
+                        <div class="mb-4 text-start">
+                            <label class="form-label fw-bold">Select Payment Method</label>
+                            <select name="paymentMethod" class="form-select">
+                                <option value="CreditCard">Credit Card (One-Click)</option>
+                                <option value="Cash">Cash (Pay at Desk)</option>
+                            </select>
+                        </div>
+
+                        <div class="alert alert-info py-2">
+                            <i class="fas fa-lock"></i>
+                            Payment details are securely handled.
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                                Confirm & Pay $@Model.Amount
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

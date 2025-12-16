@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "Booking Confirmed";
+}
+
+<div class="container mt-5 text-center">
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 600px;">
+        <div class="card-body p-5">
+
+            <h2 class="text-success mb-3">Booking Successful!</h2>
+
+            <p class="lead">Your appointment has been scheduled successfully.</p>
+
+            <div class="alert alert-light border my-4">
+                <h5>Appointment Reference ID:</h5>
+                <h3 class="text-primary fw-bold">#@ViewBag.AppointmentId</h3>
+            </div>
+
+            <p class="text-muted mb-4">You can view your scheduled visits in your dashboard history.</p>
+
+            <a href="/Home/PatientDashboard" class="btn btn-primary">Return to Dashboard</a>
+        </div>
+    </div>
+</div>

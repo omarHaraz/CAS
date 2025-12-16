@@ -1,0 +1,121 @@
+﻿@{
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "Book Appointment";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Book a New Appointment</h4>
+                </div>
+                <div class="card-body p-4">
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger list-unstyled mb-0" })
+                        </div>
+                    }
+
+                    <form asp-action="ConfirmBooking" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Doctor</label>
+                            <select name="doctorId" id="doctorId" class="form-select" asp-items="ViewBag.Doctors">
+                                <option value="" selected disabled>-- Choose a Doctor --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Preferred Date</label>
+                            <input type="date" id="appointmentDate" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Available Time Slots</label>
+                            <select id="timeSlot" class="form-select" disabled>
+                                <option>Select a date and doctor first</option>
+                            </select>
+
+                            <input type="hidden" name="time" id="finalTimeSubmission" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Reason for Visit</label>
+                            <textarea name="reason" class="form-control" rows="3" placeholder="Briefly describe your symptoms..." required></textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="btnSubmit" disabled>Confirm Booking</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            // Trigger when Doctor or Date changes
+            $('#doctorId, #appointmentDate').change(function () {
+                loadAvailableSlots();
+            });
+
+            // Trigger when Time Slot changes
+            $('#timeSlot').change(function () {
+                updateFinalTime();
+            });
+
+            function loadAvailableSlots() {
+                var doctorId = $('#doctorId').val();
+                var date = $('#appointmentDate').val();
+                var timeSelect = $('#timeSlot');
+
+                // Only search if both fields are filled
+                if (doctorId && date) {
+                    timeSelect.prop('disabled', true).html('<option>Loading slots...</option>');
+
+                    // AJAX call to the Controller
+                    $.get('/Booking/GetAvailableSlots', { doctorId: doctorId, date: date }, function (times) {
+
+                        timeSelect.empty();
+
+                        if (times.length === 0) {
+                            timeSelect.append('<option>No slots available on this date</option>');
+                            $('#btnSubmit').prop('disabled', true);
+                        } else {
+                            timeSelect.append('<option value="" selected disabled>-- Select a Time --</option>');
+
+                            // Add options dynamically
+                            $.each(times, function (i, time) {
+                                timeSelect.append($('<option></option>').val(time).html(time));
+                            });
+
+                            timeSelect.prop('disabled', false);
+                        }
+                    });
+                }
+            }
+
+            function updateFinalTime() {
+                var date = $('#appointmentDate').val();
+                var time = $('#timeSlot').val();
+
+                if (date && time) {
+                    // Combine Date and Time into one string
+                    var combinedDateTime = date + ' ' + time;
+                    $('#finalTimeSubmission').val(combinedDateTime);
+
+                    // Allow submission
+                    $('#btnSubmit').prop('disabled', false);
+                }
+            }
+        });
+    </script>
+}

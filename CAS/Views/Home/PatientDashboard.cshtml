@@ -1,6 +1,51 @@
 ﻿@{
-	ViewData["Title"] = "Patient Dashboard";
+    Layout = "_PatientLayout";
+    ViewData["Title"] = "Patient Dashboard";
+
+    var patientName = Context.Session.GetString("Username") ?? "Patient";
 }
-<h1>🤒 Patient Dashboard</h1>
-<p>Welcome. You can book an appointment here.</p>
-<a href="/Account/Login" class="btn btn-danger">Logout</a>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1>Hello, <span class="text-primary">@patientName</span>!</h1>
+        <p class="text-muted">Welcome back. Manage your health and appointments here.</p>
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0 h-100 p-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Book Appointment</h5>
+                    <p class="card-text text-muted">Find a doctor and schedule a new consultation at your convenience.</p>
+                    <a asp-controller="Booking" asp-action="Book" class="btn btn-primary mt-2">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0 h-100 p-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">My Appointments</h5>
+                    <p class="card-text text-muted">View your upcoming schedule and past consultation history.</p>
+                    <a asp-controller="Booking" asp-action="MyAppointments" class="btn btn-outline-success mt-2">View History</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm border-0 h-100 p-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning">Billing & Payments</h5>
+                    <p class="card-text text-muted">View outstanding bills and manage payment methods.</p>
+
+                    <a asp-controller="Billing" asp-action="Index" class="btn btn-outline-warning mt-2">
+                        Manage Payments
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
