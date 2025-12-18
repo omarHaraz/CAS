@@ -1,10 +1,9 @@
 ﻿using CAS.Data;
 using CAS.Models;
 using CAS.Strategy;
+using CAS.Observer; // <--- ADD THIS NAMESPACE
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CAS.Controllers
@@ -13,24 +12,21 @@ namespace CAS.Controllers
     {
         private readonly AppDbContext _context;
         private readonly PaymentContext _paymentContext;
+        private readonly AppointmentNotifier _notifier; // <--- 1. Add the Notifier
 
-        // Dependency Injection: Inject Database AND PaymentContext
-        public BillingController(AppDbContext context, PaymentContext paymentContext)
+        // Inject the Notifier in the constructor
+        public BillingController(AppDbContext context, PaymentContext paymentContext, AppointmentNotifier notifier)
         {
             _context = context;
             _paymentContext = paymentContext;
+            _notifier = notifier; // <--- 2. Initialize it
         }
 
-        // =========================================================
-        // API 1: GET /Billing/Index
-        // Shows all unpaid bills for the logged-in patient
-        // =========================================================
         public async Task<IActionResult> Index()
         {
             var patientId = HttpContext.Session.GetInt32("UserId");
             if (patientId == null) return RedirectToAction("Login", "Account");
 
-            // Fetch unpaid bills linked to this patient's appointments
             var bills = await _context.Bills
                 .Include(b => b.Appointment)
                 .ThenInclude(a => a.Doctor)
@@ -40,10 +36,6 @@ namespace CAS.Controllers
             return View(bills);
         }
 
-        // =========================================================
-        // API 2: GET /Billing/Pay/{id}
-        // Opens the Payment Page for a specific Bill
-        // =========================================================
         [HttpGet]
         public async Task<IActionResult> Pay(int id)
         {
@@ -53,26 +45,21 @@ namespace CAS.Controllers
             return View(bill);
         }
 
-        // =========================================================
-        // API 3: POST /Billing/ProcessPayment
-        // The CORE logic that uses the Strategy Pattern
-        // =========================================================
-        // 3. POST: Process Payment (Updated to Confirm Appointment)
         [HttpPost]
         public async Task<IActionResult> ProcessPayment(int billId, string paymentMethod)
         {
-            // 1. Get the Bill (and include the Appointment so we can update it)
+            // Include Appointment so we know WHICH Doctor to notify
             var bill = await _context.Bills
-                .Include(b => b.Appointment) // <--- CRITICAL: Load the appointment
+                .Include(b => b.Appointment)
                 .FirstOrDefaultAsync(b => b.Id == billId);
 
             if (bill == null) return NotFound();
 
-            // 2. Select Strategy (Illusion)
+            // 1. Strategy (The Illusion)
             IPaymentStrategy strategy = null;
             if (paymentMethod == "CreditCard")
             {
-                strategy = new CreditCardPaymentStrategy("4242-4242", "999");
+                strategy = new CreditCardPaymentStrategy("FAKE-CARD", "999");
             }
             else if (paymentMethod == "Cash")
             {
@@ -83,32 +70,33 @@ namespace CAS.Controllers
                 return RedirectToAction("Index");
             }
 
-            // 3. Fake Delay
+            // 2. Fake Delay
             await Task.Delay(2000);
 
-            // 4. Process Payment
+            // 3. Execute Payment
             _paymentContext.SetPaymentStrategy(strategy);
             string transactionResult = _paymentContext.ExecutePayment(bill.Amount);
 
-            // 5. UPDATE BILL STATUS
+            // 4. Update Bill Logic
             bill.IsPaid = true;
             bill.PaymentMethod = paymentMethod;
             bill.TransactionId = transactionResult;
 
-            // =========================================================
-            // 6. NEW: UPDATE APPOINTMENT STATUS TO 'CONFIRMED'
-            // =========================================================
-            if (bill.Appointment != null)
-            {
-                bill.Appointment.Status = AppointmentStatus.Confirmed;
-            }
-            // =========================================================
-
             _context.Bills.Update(bill);
             await _context.SaveChangesAsync();
 
+            // =========================================================
+            // 5. OBSERVER PATTERN TRIGGER (Send the Alert!)
+            // =========================================================
+            string message = $"Appointment #{bill.AppointmentId} has been paid.";
+
+            // Notify the specific doctor linked to this appointment
+            _notifier.Notify(message, bill.Appointment.DoctorId);
+            // =========================================================
+
             return RedirectToAction("PaymentSuccess");
         }
+
         public IActionResult PaymentSuccess()
         {
             return View();

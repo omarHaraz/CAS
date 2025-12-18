@@ -1,6 +1,7 @@
 using CAS.Data;
 using CAS.Facade;
 using CAS.Factories;
+using CAS.Observer;
 using CAS.Strategy;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ builder.Services.AddScoped<IUserFactory, UserFactory>();
 
 builder.Services.AddScoped<IAppointmentFacade, AppointmentFacade>();
 
+builder.Services.AddSingleton<AppointmentNotifier>();
 builder.Services.AddScoped<PaymentContext>();
 
 builder.Services.AddSession(options =>

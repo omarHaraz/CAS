@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "_DoctorLayout";
+    ViewData["Title"] = "Block a Slot";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-ban me-2"></i>Block Time / Leave</h4>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted">
+                        Select a time range to mark as unavailable. Patients will not be able to book this slot.
+                    </p>
+
+                    <form asp-action="BlockSlot" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Date</label>
+                            <input type="date" name="date" class="form-control" required />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Start Time</label>
+                                <input type="time" name="startTime" class="form-control" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Duration</label>
+                                <select name="duration" class="form-select">
+                                    <option value="60">1 Hour</option>
+                                    <option value="120">2 Hours</option>
+                                    <option value="180">3 Hours</option>
+                                    <option value="480">Full Day (8 Hours)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                Confirm Block
+                            </button>
+                            <a asp-action="Dashboard" class="btn btn-link text-muted mt-2">Cancel</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

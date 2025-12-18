@@ -42,25 +42,36 @@ namespace CAS.Facade
             var endHour = 17;
             var appointmentDuration = TimeSpan.FromMinutes(30);
 
-            var potentialSlots = new List<DateTime>();
+            // 1. Fetch ALL appointments for that day (Confirmed or Blocked)
+            // We need the EndTime to check for overlaps
+            var appointments = await _context.Appointments
+                .Where(a => a.DoctorId == doctorId &&
+                            a.StartTime.Date == date.Date &&
+                            a.Status != AppointmentStatus.Cancelled)
+                .Select(a => new { a.StartTime, a.EndTime }) // optimization: only fetch times
+                .ToListAsync();
+
+            var availableSlots = new List<DateTime>();
             var currentSlot = date.Date.AddHours(startHour);
 
             while (currentSlot.Hour < endHour)
             {
-                potentialSlots.Add(currentSlot);
+                // 2. LOGIC CHECK: Is this specific time slot "occupied"?
+                // A slot is occupied if it falls anywhere inside an existing appointment's range.
+                // Condition: currentSlot >= Start AND currentSlot < End
+                bool isOccupied = appointments.Any(a =>
+                    currentSlot >= a.StartTime && currentSlot < a.EndTime);
+
+                if (!isOccupied)
+                {
+                    availableSlots.Add(currentSlot);
+                }
+
                 currentSlot = currentSlot.Add(appointmentDuration);
             }
 
-            var bookedSlots = await _context.Appointments
-                .Where(a => a.DoctorId == doctorId &&
-                            a.StartTime.Date == date.Date &&
-                            a.Status != AppointmentStatus.Cancelled)
-                .Select(a => a.StartTime)
-                .ToListAsync();
-
-            return potentialSlots.Except(bookedSlots);
+            return availableSlots;
         }
-
         // 3. Get Doctor Schedule (for Doctor Dashboard)
         public async Task<IEnumerable<Appointment>> GetDoctorScheduleAsync(int doctorId, DateTime startDate, DateTime endDate)
         {

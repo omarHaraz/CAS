@@ -1,0 +1,79 @@
+﻿@model IEnumerable<CAS.Models.Appointment>
+
+@{
+    Layout = "_DoctorLayout";
+    ViewData["Title"] = "My Schedule";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="fas fa-calendar-alt me-2"></i>My Schedule</h2>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="text-center p-5 text-muted">
+                    <h4>No appointments scheduled.</h4>
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="p-3">Time</th>
+                            <th class="p-3">Patient / Type</th>
+                            <th class="p-3">Reason</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(item.Status == CAS.Models.AppointmentStatus.Blocked ? "table-danger" : "")">
+
+                                <td class="p-3 fw-bold text-primary">
+                                    @item.StartTime.ToString("MMM dd") <br />
+                                    <small class="text-muted">@item.StartTime.ToString("hh:mm tt")</small>
+                                </td>
+
+                                <td class="p-3 fw-bold">
+                                    @if (item.Status == CAS.Models.AppointmentStatus.Blocked)
+                                    {
+                                        <span class="text-danger fst-italic">
+                                            <i class="fas fa-ban me-2"></i> SLOT BLOCKED
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        @(item.Patient?.Username ?? "Unknown Patient")
+                                    }
+                                </td>
+
+                                <td class="p-3 text-muted">@item.Reason</td>
+
+                                <td class="p-3">
+                                    @if (item.Status == CAS.Models.AppointmentStatus.Blocked)
+                                    {
+                                        <span class="badge bg-danger">Unavailable</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Confirmed</span>
+                                    }
+                                </td>
+
+                                <td class="p-3">
+                                    <button class="btn btn-sm btn-outline-secondary">Details</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

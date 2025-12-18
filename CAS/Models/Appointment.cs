@@ -5,12 +5,13 @@ using CAS.Models.Users;
 
 namespace CAS.Models
 {
+    // 1. UPDATE ENUM
     public enum AppointmentStatus
     {
         Pending,
         Confirmed,
         Cancelled,
-        Completed
+        Blocked 
     }
 
     public class Appointment
@@ -18,13 +19,15 @@ namespace CAS.Models
         [Key]
         public int Id { get; set; }
 
-        public int PatientId { get; set; }
+        // 2. MAKE PATIENT NULLABLE
+        public int? PatientId { get; set; } // <--- Changed from int to int?
+
         [ForeignKey("PatientId")]
-        public Patient Patient { get; set; }
+        public virtual Patient? Patient { get; set; } // <--- Added '?'
 
         public int DoctorId { get; set; }
         [ForeignKey("DoctorId")]
-        public Doctor Doctor { get; set; }
+        public virtual Doctor Doctor { get; set; }
 
         [Required]
         public DateTime StartTime { get; set; }
@@ -35,5 +38,7 @@ namespace CAS.Models
         public string Reason { get; set; } = string.Empty;
 
         public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
+
+        public virtual Bill Bill { get; set; }
     }
 }
